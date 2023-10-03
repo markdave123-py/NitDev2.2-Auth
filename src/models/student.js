@@ -143,13 +143,13 @@ export async function getCoursesEnrolledFor(payLoad) {
   }
 }
 
-const payloader = {
-  role: "student",
-  course_code: "CMP207",
-  student_username: "kolawole",
-};
+// const payloader = {
+//   role: "student",
+//   course_code: "CMP207",
+//   student_username: "kolawole",
+// };
 
-enrollInCourse(payloader);
+// enrollInCourse(payloader);
 // dropCourse(payloader);
 // getStudentsAcrossCourse(payloader);
 // getAllCourses(payloader);

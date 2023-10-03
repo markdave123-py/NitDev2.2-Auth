@@ -1,5 +1,7 @@
 //Database Interactions
 import client from "../config/db.js";
+import { hashPassword, passwordMatches } from "../utils/hash.js";
+import { generateToken } from "../utils/jwt.js";
 
 //Function to check if username already exists in database
 export async function checkIfUserExists(username, role) {
@@ -23,14 +25,16 @@ export async function register(payload) {
       console.log("I exist");
       return false;
     } else {
+
+      const hashedPassword = await hashPassword(password);
       const query = `
             INSERT INTO ${role} (username, password)
             VALUES($1, $2)
             RETURNING *
             `;
-      const values = [username, password];
+      const values = [username, hashedPassword];
       const result = await client.query(query, values);
-      console.log(result.rows);
+      console.log(result.rows, result);
       return result.rows;
     }
   } catch (err) {
@@ -44,20 +48,47 @@ export async function register(payload) {
 //Function to log existing users
 export async function login(payload) {
   const { username, password, role } = payload;
+
+
   try {
+    const userExists = await checkIfUserExists(username, role);
+    if (!userExists) {
+      console.log("I don't exist");
+      return false;
+    }
+   
+    const hashedPassword = await hashPassword(password);
+    console.log(hashedPassword)
+    
     const query = `
             SELECT *
             FROM ${role}
-            WHERE username = $1 AND password = $2
+            WHERE username = $1 
             `;
-    const values = [username, password];
+    const values = [username];
+    
     const result = await client.query(query, values);
-    return result.rows;
+    
+
+    const user = result.rows[0];
+  
+
+    const isMatch = await passwordMatches(password, user.password);
+
+    if (!isMatch) {
+      return false;
+    }
+
+    const token = await generateToken(user);
+
+    return token;
+
+  
   } catch (err) {
     console.log(err.message);
-  } finally {
-    await client.end();
+
   }
+  
 }
 
 export async function reset(payload) {

@@ -148,11 +148,11 @@ export async function getTeacher(payLoad) {
 //Create course
 // dropStudent(payLoader);
 
-const payLoader = {
-  role: "admin",
-  code: "MATHS159",
-  unit: 2,
-  teacher_username: "joladeola",
-};
+// const payLoader = {
+//   role: "admin",
+//   code: "MATHS159",
+//   unit: 2,
+//   teacher_username: "joladeola",
+// };
 
-createCourse(payLoader);
+// createCourse(payLoader);

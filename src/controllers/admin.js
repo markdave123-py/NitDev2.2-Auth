@@ -1,11 +1,18 @@
-import { dropStudent } from "../models/admin";
-import { createCourse } from "../models/admin";
-import { deleteCourse } from "../models/admin";
-import { getAdmin } from "../models/admin";
-import { getTeacher } from "../models/admin";
+import { dropStudent } from "../models/admin.js";
+import { createCourse } from "../models/admin.js";
+import { deleteCourse } from "../models/admin.js";
+import { getAdmin } from "../models/admin.js";
+import { getTeacher } from "../models/admin.js";
+import { verifyToken } from "../middleware/auth.js";
 
-export async function dropAStudent(req, res) {
+export async function dropAStudent(verifyToken, req, res) {
+
+  const currentUser = req.user;
+  
   try {
+    if (currentUser.roles !== "teacher"){
+     return  res.status(403).json({ message: "UNAUTHORIZED" });
+    }
     const data = await dropStudent(req.body);
     if (data) {
       res.status(200).json({ message: "STUDENT DROPPED SUCCESSFULLY", data });
@@ -49,7 +56,7 @@ export async function getTheAdmins(req, res) {
   try {
     const data = await getAdmin(req.body);
     if (data) {
-      res.status(200).json({ message: "HERE ARE THE ADMINS", data });
+      res.status(200).json({ message: "HERE ARE THE admin.jsS", data });
     } else {
       res.json("YOU ARE NOT ALLOWED TO CARRY OUT THIS ACTION");
     }

@@ -1,8 +1,8 @@
-import { enrollInCourse } from "../models/student";
-import { dropCourse } from "../models/student";
-import { getStudentsAcrossCourse } from "../models/student";
-import { getAllCourses } from "../models/student";
-import { getCoursesEnrolledFor } from "../models/student";
+import { enrollInCourse } from "../models/student.js";
+import { dropCourse } from "../models/student.js";
+import { getStudentsAcrossCourse } from "../models/student.js";
+import { getAllCourses } from "../models/student.js";
+import { getCoursesEnrolledFor } from "../models/student.js";
 
 export async function enrollInACourse(req, res) {
   try {
@@ -34,10 +34,10 @@ export async function dropACourse(req, res) {
 
 export async function getTheStudentsAcrossCourse(req, res) {
   try {
-    const data = await getStudentsAcrossCourse(req.body);
+    const data = await getstudent.AcrossCourse(req.body);
     if (data) {
       res.status(200).json({
-        message: `HERE ARE THE STUDENTS OFFERING ${req.body.course_code}`,
+        message: `HERE ARE THE student.jsS OFFERING ${req.body.course_code}`,
         data,
       });
     } else {

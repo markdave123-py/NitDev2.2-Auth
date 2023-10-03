@@ -93,11 +93,11 @@ export async function dropStudentFromCourse(payLoad) {
   }
 }
 
-const payloader = {
-  role: "teacher",
-  course_code: "CMP207",
-  student_username: "kolawole",
-};
+// const payloader = {
+//   role: "teacher",
+//   course_code: "CMP207",
+//   student_username: "kolawole",
+// };
 
 // getStudentOfferingACourse(payloader);
 // getLecturerInACourse(payloader);

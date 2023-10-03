@@ -1,6 +1,6 @@
-import { getStudentOfferingACourse } from "../models/teacher";
-import { getLecturerInACourse } from "../models/teacher";
-import { dropStudentFromCourse } from "../models/teacher";
+import { getStudentOfferingACourse } from "../models/teacher.js";
+import { getLecturerInACourse } from "../models/teacher.js";
+import { dropStudentFromCourse } from "../models/teacher.js";
 
 export async function getTheStudentOfferingACourse(req, res) {
   try {
@@ -27,7 +27,7 @@ export async function getTheLecturerInACourse(req, res) {
         .status(200)
         .json({ message: "HERE ARE THE LECTURERS TEACHING THIS COURSE", data });
     } else if (!data) {
-      res.json(`No teacher with the course code found`);
+      res.json(`No teacher.js with the course code found`);
     } else {
       res.json("YOU ARE NOT ALLOWED TO CARRY OUT THIS ACTION");
     }

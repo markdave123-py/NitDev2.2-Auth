@@ -9,6 +9,7 @@ export async function registerPerson(req, res) {
     if (!data) {
       res.json("USERNAME EXISTS");
     } else {
+      console.log(data)
       res.json({ message: "REGISTRATION SUCESSFULL", data });
     }
   } catch (error) {
@@ -20,9 +21,14 @@ export async function logPerson(req, res) {
   try {
     const data = await login(req.body);
     if (data) {
-      res.json({ message: "LOGIN SUCCESSFUL", data });
+      
+      res.cookie("token", data, { httpOnly: true })
+      res.status(200).json({ 
+        message: "LOGIN SUCCESSFUL",
+        token: data
+      });
     } else {
-      res.json({ message: "INVALID USERNAME OR PASSWORD" });
+      res.status(403).json({ message: "INVALID USERNAME OR PASSWORD" });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
