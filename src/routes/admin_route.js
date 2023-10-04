@@ -6,6 +6,7 @@ import { createACourse } from "../controllers/admin.js";
 import { deleteACourse } from "../controllers/admin.js";
 import { getTheAdmins } from "../controllers/admin.js";
 import { getTheTeachers } from "../controllers/admin.js";
+import { authUser } from "../middleware/auth.js";
 
 adminRoute.delete("/delete-student", dropAStudent);
 adminRoute.post("/create-course", createACourse);

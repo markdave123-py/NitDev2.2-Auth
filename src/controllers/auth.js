@@ -3,7 +3,7 @@ import { register } from "../models/auth.js";
 import { login } from "../models/auth.js";
 import { reset } from "../models/auth.js";
 
-export async function registerPerson(req, res) {
+export async function registerPerson(req, res, next) {
   try {
     const data = await register(req.body);
     if (!data) {
@@ -13,7 +13,8 @@ export async function registerPerson(req, res) {
       res.json({ message: "REGISTRATION SUCESSFULL", data });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    // res.status(500).json({ message: error.message });
+    next(error)
   }
 }
 

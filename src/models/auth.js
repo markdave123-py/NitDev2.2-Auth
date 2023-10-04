@@ -35,14 +35,19 @@ export async function register(payload) {
       const values = [username, hashedPassword];
       const result = await client.query(query, values);
       console.log(result.rows, result);
-      return result.rows;
+      return {
+        username: result.rows[0].username,
+        role: role,
+        registeredAt: result.rows[0].registered_at,
+      };
     }
   } catch (err) {
     console.error(err.message);
     throw err;
-  } finally {
-    await client.end();
   }
+  // } finally {
+  //   await client.end();
+  // }
 }
 
 //Function to log existing users
@@ -57,8 +62,8 @@ export async function login(payload) {
       return false;
     }
    
-    const hashedPassword = await hashPassword(password);
-    console.log(hashedPassword)
+    // const hashedPassword = await hashPassword(password);
+    // console.log(hashedPassword)
     
     const query = `
             SELECT *
@@ -85,22 +90,23 @@ export async function login(payload) {
 
   
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
+    return res.status(500).json({ message: err.message });
 
   }
   
 }
 
 export async function reset(payload) {
-  const { username, role, old_password, new_password } = payload;
+  const { username, role, new_password } = payload;
   try {
     const query = `
             UPDATE ${role}
             SET password = $1
-            WHERE username = $2 AND password = $3
+            WHERE username = $2
             RETURNING *
             `;
-    const values = [new_password, username, old_password];
+    const values = [new_password, username];
     const result = await client.query(query, values);
     return result.rows;
   } catch (err) {

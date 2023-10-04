@@ -3,7 +3,7 @@ import { createCourse } from "../models/admin.js";
 import { deleteCourse } from "../models/admin.js";
 import { getAdmin } from "../models/admin.js";
 import { getTeacher } from "../models/admin.js";
-import { verifyToken } from "../middleware/auth.js";
+// import { verifyToken } from "../middleware/auth.js";
 
 export async function dropAStudent(verifyToken, req, res) {
 
