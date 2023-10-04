@@ -2,6 +2,8 @@
 import client from "../config/db.js";
 import { hashPassword, passwordMatches } from "../utils/hash.js";
 import { generateToken } from "../utils/jwt.js";
+import { sendMail } from "../utils/mail.sender.js";
+import { config } from "../config/env.js";
 
 //Function to check if username already exists in database
 export async function checkIfUserExists(username, role) {
@@ -97,8 +99,38 @@ export async function login(payload) {
   
 }
 
-export async function reset(payload) {
+export const sendResetLink = async (payload) => {
+
+  const { username, role} = payload;
+
+  const userExists = await checkIfUserExists(username, role)
+
+  if (!userExists) {
+    return false;
+  }
+
+ try {
+
+  const response =  await sendMail(username, config.SENDER_EMAIL)
+
+  return response
+  
+ } catch (error) {
+    console.log(error)
+
+ }
+
+
+}
+export async function resetPassword(payload) {
   const { username, role, new_password } = payload;
+
+  const userExists = await checkIfUserExists(username, role)
+
+  if (!userExists) {
+    return false;
+  }
+
   try {
     const query = `
             UPDATE ${role}
@@ -112,10 +144,14 @@ export async function reset(payload) {
   } catch (err) {
     console.error(err.message);
     throw err;
-  } finally {
-    await client.end();
+
   }
+
 }
+//   } finally {
+//     await client.end();
+//   }
+// }
 
 // const payload = {
 //   username: "doper",

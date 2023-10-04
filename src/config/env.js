@@ -10,6 +10,9 @@ export const config = Object.freeze({
     DB_PORT: process.env.DBPORT,
     DB_NAME: process.env.DBNAME,
     ACCESSTOKEN_SECRET: process.env.ACCESSTOKEN_SECRET,
+    SENDGRID_APIKEY: process.env.SENDGRID_APIKEY,
+    SENDER_EMAIL: process.env.SENDER_EMAIL,
+
 });
 
 // module.exports={

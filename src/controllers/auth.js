@@ -1,7 +1,7 @@
 import { checkIfUserExists } from "../models/auth.js";
 import { register } from "../models/auth.js";
 import { login } from "../models/auth.js";
-import { reset } from "../models/auth.js";
+import { sendResetLink } from "../models/auth.js";
 
 export async function registerPerson(req, res, next) {
   try {
@@ -33,6 +33,27 @@ export async function logPerson(req, res) {
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+}
+
+export async function sendlink(req, res, next) {
+  try {
+    const data = await sendResetLink(req.body);
+
+    if (data === false) {
+
+      res.json({ message: "INVALID USERNAME " }); 
+
+    } else {
+      res.json({ 
+        message: "PASSWORD RESET LINK SENT", 
+        response: data 
+      });
+    }
+  } catch (error) {
+    // res.status(500).json({ message: error.message });
+    next(error)
+    
   }
 }
 
