@@ -7,10 +7,10 @@ export async function registerPerson(req, res, next) {
   try {
     const data = await register(req.body);
     if (!data) {
-      res.json("USERNAME EXISTS");
+      res.status(400).json("USERNAME EXISTS or INVALID REQUEST");
     } else {
       console.log(data)
-      res.json({ message: "REGISTRATION SUCESSFULL", data });
+      res.status(201).json({ message: "REGISTRATION SUCESSFULL", data });
     }
   } catch (error) {
     // res.status(500).json({ message: error.message });
@@ -65,6 +65,15 @@ export async function resetPassword(req, res) {
     } else {
       res.json({ message: "INVALID USERNAME OR PASSWORD" });
     }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export async function logout(req, res) {
+  try {
+    res.clearCookie("token");
+    res.json({ message: "LOGOUT SUCCESSFUL" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

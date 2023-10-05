@@ -4,6 +4,7 @@ import { hashPassword, passwordMatches } from "../utils/hash.js";
 import { generateToken } from "../utils/jwt.js";
 import { sendMail } from "../utils/mail.sender.js";
 import { config } from "../config/env.js";
+import { registerSchema, loginSchema, resetSchema } from "../validation/auth.schema.js";
 
 //Function to check if username already exists in database
 export async function checkIfUserExists(username, role) {
@@ -19,7 +20,14 @@ export async function checkIfUserExists(username, role) {
 
 //Function to register new users
 export async function register(payload) {
-  const { username, password, role } = payload;
+
+  const { error, value } = registerSchema.validate(payload);
+
+  if (error) {
+    console.log(error.details, error.message)
+    return false
+  }
+  const { username, userPassword, role } = value;
 
   try {
     const userExists = await checkIfUserExists(username, role);
@@ -28,7 +36,7 @@ export async function register(payload) {
       return false;
     } else {
 
-      const hashedPassword = await hashPassword(password);
+      const hashedPassword = await hashPassword(userPassword);
       const query = `
             INSERT INTO ${role} (username, password)
             VALUES($1, $2)
@@ -37,11 +45,8 @@ export async function register(payload) {
       const values = [username, hashedPassword];
       const result = await client.query(query, values);
       console.log(result.rows, result);
-      return {
-        username: result.rows[0].username,
-        role: role,
-        registeredAt: result.rows[0].registered_at,
-      };
+      const { password, ...userData } = result.rows[0];
+      return userData;
     }
   } catch (err) {
     console.error(err.message);
@@ -54,9 +59,17 @@ export async function register(payload) {
 
 //Function to log existing users
 export async function login(payload) {
-  const { username, password, role } = payload;
 
+  const {error, value} = loginSchema.validate(payload)
 
+  if (error) {
+    console.log(error.message, error.details)
+    return false
+  }
+
+  
+  const { username, userPassword, role } = value;
+  
   try {
     const userExists = await checkIfUserExists(username, role);
     if (!userExists) {
@@ -78,15 +91,17 @@ export async function login(payload) {
     
 
     const user = result.rows[0];
+
+    const {password,registered_at, ...userData} = user;
   
 
-    const isMatch = await passwordMatches(password, user.password);
+    const isMatch = await passwordMatches(userPassword, user.password);
 
     if (!isMatch) {
       return false;
     }
 
-    const token = await generateToken(user);
+    const token = await generateToken(userData);
 
     return token;
 
@@ -101,7 +116,14 @@ export async function login(payload) {
 
 export const sendResetLink = async (payload) => {
 
-  const { username, role} = payload;
+  const { error, value } = resetSchema.validate(payload);
+  if (error) {
+
+    console.log(error.details, error.message)
+    return false
+  }
+
+  const { username, role} = value;
 
   const userExists = await checkIfUserExists(username, role)
 

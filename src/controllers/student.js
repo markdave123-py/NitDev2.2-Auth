@@ -9,10 +9,8 @@ export async function enrollInACourse(req, res) {
     const data = await enrollInCourse(req.body);
     if (data) {
       res.status(200).json({ message: "COURSE REGISTERED SUCCESSFULLY", data });
-    } else if (!data) {
-      res.json(`No course with the code found`);
     } else {
-      res.json("YOU ARE NOT ALLOWED TO CARRY OUT THIS ACTION");
+      res.status(403).json("Unauthorized");
     }
   } catch (error) {
     res.status(500).json({ message: error.message });

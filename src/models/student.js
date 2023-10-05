@@ -1,11 +1,24 @@
 import client from "../config/db.js";
+import { enrollCourse } from "../validation/student.schema.js";
 
 // Enroll in a Course
-export async function enrollInCourse(payLoad) {
+export async function enrollInCourse(payload) {
   try {
-    const { role, course_code, student_username } = payLoad;
-    if (role == "student") {
-      const query = `
+    const {error, value} = enrollCourse.validate(payload)
+
+    if (error) {
+      console.log(error.details, error.message)
+      return false
+    }
+    // const currentUser = req.user;
+    const { role, course_code, student_username } = value;
+
+    // if (currentUser.username !== student_username) {
+    //   console.log("UNAUTHORIZED");
+    //   return false;
+    // }
+    
+    const query = `
           INSERT INTO registeredCourses(course_code, student_username)
           VALUES ($1, $2)
           RETURNING *
@@ -19,17 +32,13 @@ export async function enrollInCourse(payLoad) {
         console.log(`No course with the code ${course_code} found`);
         return false;
       }
-    } else {
-      console.log("unauthorized");
-      return "UNATHORIZED";
-    }
-  } catch (err) {
+    } catch (err) {
     console.error(err.message);
     throw err;
-  } finally {
-    await client.end();
-  }
+  } 
+
 }
+
 
 // Drop Course
 export async function dropCourse(payLoad) {

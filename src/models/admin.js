@@ -1,12 +1,4 @@
-/*
-DROP STUDENT
-CREATE COURSE(3)
-DELETE COURSE
-GET-ADMIN(S)
-GET STUDENT(S)
-GET LECTURER(S)
-*/
-
+import { validateCreateCourse } from "../validation/admin.schema.js";
 import client from "../config/db.js";
 
 //Drop student
@@ -43,9 +35,30 @@ export async function dropStudent(payload) {
 //Create course
 export async function createCourse(payload) {
   try {
-    const { role, code, unit, teacher_username } = payload;
-    if (role == "admin") {
-      const query = `
+    const {error, value} = validateCreateCourse.validate(payload);
+    if (error) {
+      console.log(error.details, error.message)
+      return false
+    }
+    const {role, code, unit, teacher_username} = value;
+    
+    const currentUser = req.user;
+
+    const {username } = currentUser;
+
+    const query1 = `
+            SELECT *
+            FROM ${role}
+            WHERE username = $1 
+            `;
+    const values1 = [ username ];
+    const result1 = await client.query(query1, values1);
+
+    if (result1.rowCount < 1){
+      return false
+    }
+
+   const query = `
     INSERT INTO courses (code, unit, teacher_username)
     VALUES ($1, $2, $3)
     RETURNING * 
@@ -53,17 +66,12 @@ export async function createCourse(payload) {
       const values = [code, unit, teacher_username];
       const result = await client.query(query, values);
       console.log(result.rows);
-      return result.rows;
-    } else {
-      console.log("unauthorized");
-      return "UNATHORIZED";
-    }
+      return result.rows[0];
+    
   } catch (err) {
     console.error(err.message);
     throw err;
-  } finally {
-    await client.end();
-  }
+  } 
 }
 
 //Delete course

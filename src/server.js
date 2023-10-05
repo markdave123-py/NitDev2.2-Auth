@@ -1,5 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
+import cors from "cors";
 import { config } from "./config/env.js";
 import { authUser } from "./middleware/auth.js";
 import authRoute from "./routes/auth_routes.js";
@@ -12,6 +13,7 @@ import { errorHandler } from "./middleware/errorHandler.js";
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors());
 
 
 
